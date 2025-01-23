@@ -1,34 +1,46 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { Movies } from './components/Movies/Movies' 
+import { useMovies } from './hooks/useMovie'
+import { useSearch } from './hooks/useSearch'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
 
+
+function App() {
+  const [sort, setSort] = useState(false)
+  const {search, error, changeSearch} = useSearch()
+  const { mappedMovies, ListMovies } = useMovies({search,sort})
+
+  // // const inputRef = useRef()
+  const handleChange = (event) => {
+    changeSearch(event.target.value)
+  }
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    ListMovies()
+  }
+  const handleSort = (event) => {
+    setSort(event.target.checked)
+  }
+
+  
+
+ 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className='page'>
+      <header>
+        <h1>Buscador de Peliculas</h1>
+        <form onSubmit={handleSubmit}  className='form'>
+          <input onChange={handleChange}  type="text" placeholder='Buscar Pelicula' />
+          {error && <p>{error}</p>}
+          <input onChange={handleSort} type="checkbox" />
+          <button type='submit'>Search</button>
+        </form>
+      </header>
+
+      <main>
+       <Movies movies={mappedMovies} />
+      </main>
+    </div>
   )
 }
 
